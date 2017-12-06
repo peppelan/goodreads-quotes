@@ -41,36 +41,15 @@ class GoodreadsException(Exception):
 class Goodreads:
 
     @staticmethod
-    def get_daily_quote():
+    def get_mandela_quotes(page):
         try:
-            quotes_page = requests.get('https://www.goodreads.com/quotes')
+            quotes_page = requests.get('https://www.goodreads.com/author/quotes/367338.Nelson_Mandela?page=' + str(page))
         except Timeout as e:
             raise GoodreadsException(e)
         except RequestException as e:
             raise GoodreadsException(e)
 
-        tree = html.fromstring(quotes_page.content)
-
-        quote_text = tree.xpath('//div[@id="quoteoftheday"]/div[1]/i/text()')[0]
-        author = tree.xpath('//div[@id="quoteoftheday"]/div[2]/strong/div/a/text()')[0]
-
-        quote = {
-            'quote': quote_text,
-            'author': author
-        }
-
-        return quote
-
-    @staticmethod
-    def get_popular_quotes():
-        try:
-            quotes_page = requests.get('https://www.goodreads.com/quotes')
-        except Timeout as e:
-            raise GoodreadsException(e)
-        except RequestException as e:
-            raise GoodreadsException(e)
-
-        tree = html.fromstring(quotes_page.content)
+        tree = html.fromstring(quotes_page.content.decode('UTF-8'))
 
         quotes = []
         for quote_div in tree.xpath('//div[@class="quoteText"]'):
